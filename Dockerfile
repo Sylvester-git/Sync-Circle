@@ -22,17 +22,18 @@ RUN apt-get update && \
     apt-get clean
 
 # download Flutter SDK from Flutter Github repo
-RUN git clone https://github.com/flutter/flutter.git /Users/Ebine/Dev/flutter
+RUN git clone https://github.com/flutter/flutter.github
+#  /Users/Ebine/Dev/flutter
 
-# Set flutter environment path
-ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-sdk/bin:${PATH}"
+# # Set flutter environment path
+# ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # Run flutter doctor
 # RUN flutter doctor
 
 # Enable flutter web
-# RUN flutter channel master
-RUN flutter upgrade
+RUN flutter doctor
+RUN flutter channel master && flutter upgrade
 RUN flutter config --enable-web
 
 # Copy files to container and build
