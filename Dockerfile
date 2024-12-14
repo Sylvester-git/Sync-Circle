@@ -31,7 +31,7 @@ ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-s
 # RUN flutter doctor
 
 # Enable flutter web
-RUN flutter channel master
+# RUN flutter channel master
 RUN flutter upgrade
 RUN flutter config --enable-web
 
