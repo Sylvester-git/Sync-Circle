@@ -50,7 +50,13 @@ FROM ubuntu:20.04 AS build
 # # Start Nginx server
 # CMD ["nginx", "-g", "daemon off;"]
 
+# Install required dependencies, including curl
+RUN apt-get update && apt-get install -y --no-install-recommends curl git unzip xz-utils ca-certificates
 
+# Optional: Clean up to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Test curl
 RUN curl -I https://storage.googleapis.com
+
 
