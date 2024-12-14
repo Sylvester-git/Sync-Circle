@@ -22,26 +22,25 @@
 #     apt-get clean
 
 # # download Flutter SDK from Flutter Github repo
-# RUN git clone https://github.com/flutter/flutter.git 
+# RUN git clone https://github.com/flutter/flutter.git /Users/Ebine/Dev/flutter
 
-# # /Users/Ebine/Dev/flutter
-
-# # # Set flutter environment path
-# # ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-sdk/bin:${PATH}"
+# # Set flutter environment path
+# ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # # Run flutter doctor
-# # RUN flutter doctor
+# RUN flutter doctor
 
 # # Enable flutter web
-# RUN flutter doctor
-# RUN flutter channel master && flutter upgrade
+# RUN flutter channel master
+# RUN flutter upgrade
 # RUN flutter config --enable-web
 
 # # Copy files to container and build
 # RUN mkdir /app/
 # COPY . /app/
 # WORKDIR /app/
-# RUN flutter build web xcopy /E /H /Y build\web\* docs\
+# RUN flutter build web
+
 # # Record the exposed port
 # EXPOSE 9000
 
@@ -50,45 +49,51 @@
 
 # ENTRYPOINT [ "/app/server/server.sh"]
 
-# Use the official Flutter base image
-FROM cirrusci/flutter:stable
+# Use a lightweight base image
+FROM ubuntu:20.04 AS build
 
-# Set the working directory in the container
-WORKDIR /app
+# Set environment variables to reduce interaction and improve Flutter dependency resolution
+ENV DEBIAN_FRONTEND=noninteractive \
+    PUB_HOSTED_URL=https://pub.flutter-io.cn \
+    FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y nginx curl unzip git
+# Install essential packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the Flutter project files into the container
-COPY . .
+# Clone the Flutter SDK
+RUN git clone https://github.com/flutter/flutter.git /flutter
 
-# Run Flutter doctor to ensure Flutter is set up correctly
+# Set Flutter environment paths
+ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
+# Run Flutter doctor to verify installation
 RUN flutter doctor
 
-# Enable Flutter web support
-RUN flutter config --enable-web
+# Enable Flutter web and switch to the stable channel
+RUN flutter config --enable-web && \
+    flutter channel stable && \
+    flutter upgrade
 
-# Ensure Flutter dependencies are fetched
-RUN flutter pub get
+# Set the working directory
+WORKDIR /app
 
-# Build the Flutter web project
-RUN flutter build web
+# Copy the project files into the container
+COPY . .
 
-# Set up Nginx to serve the Flutter web app
-RUN rm -rf /etc/nginx/sites-enabled/default && \
-    echo "server { \
-            listen 80; \
-            server_name localhost; \
-            root /app/build/web; \
-            index index.html; \
-            location / { \
-                try_files \$uri \$uri/ /index.html; \
-            } \
-         }" > /etc/nginx/sites-available/default && \
-    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Fetch Flutter dependencies and build the web project
+RUN flutter pub get && \
+    flutter build web --release
 
-# Expose port 80 for the web server
+# Use a lightweight server to serve the built files
+FROM nginx:alpine AS production
+
+# Copy the built web files from the build stage
+COPY --from=build /app/build/web /usr/share/nginx/html
+
+# Expose the port for the web server
 EXPOSE 80
 
-# Start Nginx
+# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
