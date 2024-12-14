@@ -2,9 +2,10 @@
 FROM ubuntu:20.04 AS build
 
 # Set environment variables to reduce interaction and improve Flutter dependency resolution
-ENV DEBIAN_FRONTEND=noninteractive \
-    PUB_HOSTED_URL=https://pub.flutter-io.cn \
-    FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+ENV DEBIAN_FRONTEND=noninteractive 
+# \
+#     PUB_HOSTED_URL=https://pub.flutter-io.cn \
+#     FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 
 # Install essential packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -17,7 +18,7 @@ RUN git clone https://github.com/flutter/flutter.git /flutter
 # Set Flutter environment paths
 ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-RUN curl -I https://storage.flutter-io.cn/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
+# RUN curl -I https://storage.flutter-io.cn/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
 
 # Run Flutter doctor to verify installation
 RUN flutter doctor
