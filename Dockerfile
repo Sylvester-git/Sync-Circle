@@ -28,7 +28,7 @@ RUN git clone https://github.com/flutter/flutter.git /Users/Ebine/Dev/flutter
 ENV PATH="/Users/Ebine/Dev/flutter/bin:/Users/Ebine/Dev/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # Run flutter doctor
-RUN flutter doctor
+# RUN flutter doctor
 
 # Enable flutter web
 RUN flutter channel master
