@@ -9,7 +9,7 @@ FROM ubuntu:20.04 AS build
 
 # Install essential packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback && \
+    curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback openjdk-17-jdk && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     git config --global http.postBuffer 157286400
 
