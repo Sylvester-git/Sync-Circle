@@ -40,9 +40,12 @@ WORKDIR /app
 # Copy the project files into the container
 COPY . .
 
-# # Manually add the Gradle wrapper files to the project
-# COPY android/gradle/wrapper/gradle-wrapper.jar /app/android/gradle/wrapper/
-# COPY android/gradle/wrapper/gradle-wrapper.properties /app/android/gradle/wrapper/
+# Manually add the Gradle wrapper files to the container from your local directory
+COPY gradle-wrapper.tgz /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz
+
+# Extract the downloaded gradle-wrapper.tgz to the appropriate location
+RUN mkdir -p /usr/local/flutter/bin/cache/artifacts/gradle_wrapper && \
+    tar -xzf /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz -C /usr/local/flutter/bin/cache/artifacts/gradle_wrapper
 
 # Fetch Flutter dependencies and build the web project
 RUN flutter pub get && \
