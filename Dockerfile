@@ -10,11 +10,27 @@ ENV DEBIAN_FRONTEND=noninteractive
 # #     PUB_HOSTED_URL=https://pub.flutter-io.cn \
 # #     FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 
-# Install essential packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback openjdk-17-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    git config --global http.postBuffer 157286400
+# # Install essential packages
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback openjdk-17-jdk && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/* && \
+#     git config --global http.postBuffer 157286400
+
+# Install essential dependencies
+RUN apt-get update && apt-get install -y \
+  apt-transport-https \
+  curl \
+  git \
+  unzip \
+  xz-utils \
+  zip \
+  libglu1-mesa \
+  openjdk-17-jdk \
+  lib32stdc++6 \
+  lib32z1 \
+  wget \
+  bash \
+  && rm -rf /var/lib/apt/lists/*
 
 # Clone the flutter repo
 # Clone the flutter repo and check out version 3.24.3 from the master branch
@@ -25,6 +41,7 @@ RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter && \
 
 # Set flutter path
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
 
 # Enable flutter web
 RUN flutter channel master
