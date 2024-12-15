@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy project files into the container
 COPY . .
 
-# Fix file permissions
-RUN chmod -R 777 /app
+# Switch to root user temporarily
+USER root
 
 
 # Enable Flutter web and fetch dependencies
