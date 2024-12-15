@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git config --global http.postBuffer 157286400
 
 # Clone the Flutter SDK
-RUN git clone --branch stable --depth 1 https://github.com/flutter/flutter.git /flutter
+RUN git clone --branch 3.24.3 --depth 1 https://github.com/flutter/flutter.git /flutter
 
 # Set Flutter environment paths
 ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
@@ -25,7 +25,7 @@ RUN flutter precache && flutter pub cache repair
 # RUN curl -I https://storage.flutter-io.cn/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
 
 # Run Flutter doctor to verify installation
-RUN flutter doctor
+RUN flutter doctor -v
 
 # Enable Flutter web and switch to the stable channel
 RUN flutter config --enable-web && \
