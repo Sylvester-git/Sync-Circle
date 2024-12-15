@@ -17,7 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git config --global http.postBuffer 157286400
 
 # Clone the flutter repo
-RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+# Clone the flutter repo and check out version 3.24.3 from the master branch
+RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter && \
+    cd /usr/local/flutter && \
+    git fetch --tags && \
+    git checkout 3.24.3
 
 # Set flutter path
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
