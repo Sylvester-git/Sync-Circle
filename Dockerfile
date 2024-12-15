@@ -10,6 +10,13 @@ COPY . .
 # Switch to root user temporarily
 USER root
 
+# Pre-cache Flutter tools and dependencies
+RUN flutter precache && \
+    flutter doctor && \
+    flutter config --enable-web 
+
+# Debug Flutter SDK version
+RUN flutter --version
 
 # Enable Flutter web and fetch dependencies
 RUN flutter config --enable-web && \
