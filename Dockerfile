@@ -1,6 +1,9 @@
 # Use a lightweight base image
 FROM ubuntu:20.04 AS build
 
+# Set environment variable to disable interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
 # # Set environment variables to reduce interaction and improve Flutter dependency resolution
 # ENV DEBIAN_FRONTEND=noninteractive 
 # # \
