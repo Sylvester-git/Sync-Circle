@@ -40,6 +40,10 @@ WORKDIR /app
 # Copy the project files into the container
 COPY . .
 
+# Manually add the Gradle wrapper files to the project
+COPY ./android/gradle/wrapper/gradle-wrapper.jar /app/android/gradle/wrapper/
+COPY ./android/gradle/wrapper/gradle-wrapper.properties /app/android/gradle/wrapper/
+
 # Fetch Flutter dependencies and build the web project
 RUN flutter pub get && \
     flutter build web --release
