@@ -1,5 +1,5 @@
 # Use the prebuilt Flutter image as the base for the build stage
-FROM fischerscode/flutter:3.24.3 as build
+FROM fischerscode/flutter:stable as build
 
 # Set the working directory
 WORKDIR /app
