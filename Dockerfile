@@ -1,49 +1,21 @@
-# Use a lightweight base image
-FROM ubuntu:20.04 AS build
-
-# Set environment variables to reduce interaction and improve Flutter dependency resolution
-ENV DEBIAN_FRONTEND=noninteractive 
-# \
-#     PUB_HOSTED_URL=https://pub.flutter-io.cn \
-#     FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
-
-# Install essential packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl git wget unzip xz-utils ca-certificates libstdc++6 libglu1-mesa fonts-droid-fallback && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    git config --global http.postBuffer 157286400
-
-# Clone the Flutter SDK
-RUN git clone --branch 3.24.3 --depth 1 https://github.com/flutter/flutter.git /flutter
-
-# Set Flutter environment paths
-ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
-
-# Pre-cache Flutter tools and dependencies
-RUN flutter precache && flutter pub cache repair
-
-# RUN curl -I https://storage.flutter-io.cn/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
-
-# Run Flutter doctor to verify installation
-RUN flutter doctor -v
-
-# Enable Flutter web and switch to the stable channel
-RUN flutter config --enable-web && \
-    flutter channel stable && \
-    flutter upgrade
+# Use the prebuilt Flutter image as the base for the build stage
+FROM fischerscode/flutter:3.24.3 as build
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the project files into the container
+# Copy project files into the container
 COPY . .
 
-# Fetch Flutter dependencies and build the web project
-RUN flutter pub get && \
-    flutter build web --release
+# Enable Flutter web and fetch dependencies
+RUN flutter config --enable-web && \
+    flutter pub get
 
-# Use a lightweight server to serve the built files
-FROM nginx:alpine AS production
+# Build the Flutter web project in release mode
+RUN flutter build web --release
+
+# Use a lightweight Nginx image for serving the Flutter web app
+FROM nginx:alpine as production
 
 # Copy the built web files from the build stage
 COPY --from=build /app/build/web /usr/share/nginx/html
@@ -51,5 +23,6 @@ COPY --from=build /app/build/web /usr/share/nginx/html
 # Expose the port for the web server
 EXPOSE 80
 
-# Start Nginx server
+# Start the Nginx server
 CMD ["nginx", "-g", "daemon off;"]
+
