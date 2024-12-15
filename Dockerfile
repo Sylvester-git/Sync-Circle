@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy project files into the container
 COPY . .
 
-# Fix ownership and permissions
-RUN chown -R flutter:flutter /app && chmod -R 755 /app
+# Fix file permissions
+RUN chmod -R 777 /app
 
 
 # Enable Flutter web and fetch dependencies
