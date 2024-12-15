@@ -7,7 +7,8 @@ WORKDIR /app
 # Copy project files into the container
 COPY . .
 
-RUN ls -l /app
+# Debug: Check file permissions and ownership
+RUN ls -l /app && whoami
 
 # Fix file permissions
 RUN chown -R flutter:flutter /app && chmod -R 777 /app
