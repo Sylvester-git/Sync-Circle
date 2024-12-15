@@ -43,6 +43,7 @@ COPY . .
 # **Step 1: Download the Gradle Wrapper directly**
 RUN curl -L -o /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz https://storage.googleapis.com/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
 
+
 # **Step 2: Extract the Gradle wrapper files**
 RUN mkdir -p /usr/local/flutter/bin/cache/artifacts/gradle_wrapper && \
     tar -xzf /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz -C /usr/local/flutter/bin/cache/artifacts/gradle_wrapper
