@@ -40,10 +40,16 @@ WORKDIR /app
 # Copy the project files into the container
 COPY . .
 
-# **Second resolve**: Download the Gradle wrapper directly into the container if not already present
-RUN curl -L -o /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz https://storage.googleapis.com/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz && \
-    mkdir -p /usr/local/flutter/bin/cache/artifacts/gradle_wrapper && \
+# **Step 1: Download the Gradle Wrapper directly**
+RUN curl -L -o /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz https://storage.googleapis.com/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz
+
+# **Step 2: Extract the Gradle wrapper files**
+RUN mkdir -p /usr/local/flutter/bin/cache/artifacts/gradle_wrapper && \
     tar -xzf /usr/local/flutter/bin/cache/downloads/flutter_infra_release/gradle-wrapper.tgz -C /usr/local/flutter/bin/cache/artifacts/gradle_wrapper
+
+# **Step 3: Ensure Gradle Wrapper file is available by copying your own Gradle wrapper (optional)**
+COPY android/gradle/wrapper/gradle-wrapper.jar /usr/local/flutter/bin/cache/artifacts/gradle_wrapper/gradle-wrapper.jar
+COPY android/gradle/wrapper/gradle-wrapper.properties /usr/local/flutter/bin/cache/artifacts/gradle_wrapper/gradle-wrapper.properties
 
 # Fetch Flutter dependencies and build the web project
 RUN flutter pub get && \
